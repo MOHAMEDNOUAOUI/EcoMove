@@ -15,6 +15,7 @@ create table Partenaire (
     type_trasport enum ('Avion' , 'train' , 'Bus'),
     zone_geographique VARCHAR(255),
     conditions_speciales TEXT,
+    status_partenaire enum('Actif' , 'Inactif' , 'Suspendu');
     date_creation DATE
 )
 

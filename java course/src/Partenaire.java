@@ -1,6 +1,6 @@
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
 
 public class Partenaire {
 
@@ -19,13 +19,16 @@ public class Partenaire {
     public Partenaire(String nom_compagnie, String contact_commercial, TypeTransport type_transport,
                       String zone_geographique, String conditions_speciales,
                       StatutPartenaire statut_partenaire, String date_creation) {
+
+
+
+
         this.nom_compagnie = nom_compagnie;
         this.contact_commercial = contact_commercial;
         this.type_transport = type_transport;
         this.zone_geographique = zone_geographique;
         this.conditions_speciales = conditions_speciales;
         this.statut_partenaire = statut_partenaire;
-        this.date_creation = date_creation;
 
         addToDatabase();
     }
@@ -36,16 +39,17 @@ public class Partenaire {
         try {
             conn = Database.getConnection();
 
-            String sql = "INSERT INTO partenaires (nom_compagnie, contact_commercial, type_transport, zone_geographique, conditions_speciales, statut_partenaire, date_creation) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO partenaire (nom_compagnie, contact_commercial, type_transport, zone_geographique, conditions_speciales, statut_partenaire , date_creation) " +
+                    "VALUES (?, ?, ?::type_transport, ?, ?, ?::statut_partenaire , date_creation)";
 
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, nom_compagnie);
             pstmt.setString(2, contact_commercial);
-            pstmt.setString(3, type_transport.toString());
+            pstmt.setString(3, type_transport.name());
             pstmt.setString(4, zone_geographique);
             pstmt.setString(5, conditions_speciales);
-            pstmt.setString(6, date_creation);
+            pstmt.setString(6,statut_partenaire.name());
+            pstmt.setDate(7, Date.valueOf(date_creation));
             pstmt.executeUpdate();
 
         }catch (SQLException e) {
@@ -54,7 +58,7 @@ public class Partenaire {
     }
 
     public int getId() {
-        return this.id;
+        return id;
     }
 
     public void setId(int id) {
@@ -62,7 +66,7 @@ public class Partenaire {
     }
 
     public String getNomCompagnie() {
-        return this.nom_compagnie;
+        return nom_compagnie;
     }
 
     public void setNomCompagnie(String nom_compagnie) {
@@ -70,7 +74,7 @@ public class Partenaire {
     }
 
     public String getContactCommercial() {
-        return this.contact_commercial;
+        return contact_commercial;
     }
 
     public void setContactCommercial(String contact_commercial) {
@@ -78,7 +82,7 @@ public class Partenaire {
     }
 
     public TypeTransport getTypeTransport() {
-        return this.type_transport;
+        return type_transport;
     }
 
     public void setTypeTransport(TypeTransport type_transport) {
@@ -86,7 +90,7 @@ public class Partenaire {
     }
 
     public String getZoneGeographique() {
-        return this.zone_geographique;
+        return zone_geographique;
     }
 
     public void setZoneGeographique(String zone_geographique) {
@@ -94,7 +98,7 @@ public class Partenaire {
     }
 
     public String getConditionsSpeciales() {
-        return this.conditions_speciales;
+        return conditions_speciales;
     }
 
     public void setConditionsSpeciales(String conditions_speciales) {
@@ -102,7 +106,7 @@ public class Partenaire {
     }
 
     public StatutPartenaire getStatutPartenaire() {
-        return this.statut_partenaire;
+        return statut_partenaire;
     }
 
     public void setStatutPartenaire(StatutPartenaire statut_partenaire) {
@@ -110,7 +114,7 @@ public class Partenaire {
     }
 
     public String getDateCreation() {
-        return this.date_creation;
+        return date_creation;
     }
 
     public void setDateCreation(String date_creation) {
@@ -118,6 +122,31 @@ public class Partenaire {
     }
 
 
+
+//    public static ArrayList<Partenaire> getAllPartenair() throws ClassNotFoundException , SQLException {
+//            Connection conn = null;
+//            PreparedStatement pstmt = null;
+//            try{
+//
+//                conn = Database.getConnection();
+//
+//                Statement stmt = conn.createStatement();
+//                ResultSet rs = stmt.executeQuery("select * from partenaire");
+//
+//                ArrayList<Partenaire> PartenaireList = new ArrayList<>();
+//                while(rs.next()) {
+//                    Partenaire partenaire = new Partenaire(rs.getString("id") , rs.getString("nom_compagnie"),rs.getString("contact_commercial"), rs.getString("type_transport") , rs.getString("zone_geographique") , rs.getArray("conditions_speciales") , rs.getString("statut_partenaire"));
+//                }
+//
+//                return rs;
+//
+//            }catch(SQLException e){
+//                e.printStackTrace();
+//            }
+//
+//
+//
+//    }
 
 
 

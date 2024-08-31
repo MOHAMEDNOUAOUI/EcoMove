@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.util.Scanner;
 
 public class Main {
@@ -91,10 +92,11 @@ public class Main {
             }
         }
 
-        System.out.print("Enter creation date (YYYY-MM-DD): ");
-        String dateCreation = scanner.nextLine();
+        System.out.println("Please Enter a valid Date (0000-00-00)");
+        String date_creation  = scanner.nextLine();
 
-        Partenaire partenaire = new Partenaire(nom_compagnie, contact_commercial, typeTransport, zoneGeographique, conditionsSpeciales, statutPartenaire, dateCreation);
+
+        Partenaire partenaire = new Partenaire(nom_compagnie, contact_commercial, typeTransport, zoneGeographique, conditionsSpeciales, statutPartenaire , date_creation);
         // Save the partenaire object to the database here
         System.out.println("Partenaire created: " + partenaire);
     }
