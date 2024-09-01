@@ -1,6 +1,8 @@
 import javax.xml.crypto.Data;
+import java.awt.*;
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -52,45 +54,59 @@ public class Main {
 ██║░░░░░██║░░██║██║░░██║░░░██║░░░██║░╚███║███████╗██║░░██║  ██║░░██║██║░░██║███████╗██║░░██║
 ╚═╝░░░░░╚═╝░░╚═╝╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░╚══╝╚══════╝╚═╝░░╚═╝  ╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝
      */
-
     public static void choicegestionDupartner() throws SQLException, ClassNotFoundException, InterruptedException {
-        System.out.println();
-        System.out.println(" -----------------------------");
-        System.out.println("|                             |");
-        System.out.println("|      Gestion Partenaire     |");
-        System.out.println("|  1 : Add Partenaire         |");
-        System.out.println("|  2 : Modifier Partenaire    |");
-        System.out.println("|  3 : Remove Partenaire      |");
-        System.out.println("|  4 : Find a Partenaire      |");
-        System.out.println("|  5 : List All Partenaires   |");
-        System.out.println("|  6 : Return                 |");
-        System.out.println("|                             |");
-        System.out.println(" -----------------------------");
-        System.out.print("Enter Your Choice : ");
-        int choice = scanner.nextInt();
-        scanner.nextLine();
-        switch (choice) {
-            case 1:
-                createpartenair();
-                break;
-            case 2:
-                modifypartenaire();
-                break;
-            case 3:
-                removepartenair();
-                break;
-           case 4:
-                findOnePartenaire();
-                break;
-            case 5:
-                AllPartners();
-                break;
 
-            case 6:
-                return; // Returns to the previous menu or exits if it's the top level
-            default:
-                System.out.println("Invalid choice. Please try again.");
+        boolean check = false;
+
+
+        while (check == false) {
+
+            System.out.println();
+            System.out.println(" -----------------------------");
+            System.out.println("|                             |");
+            System.out.println("|      Gestion Partenaire     |");
+            System.out.println("|  1 : Add Partenaire         |");
+            System.out.println("|  2 : Modifier Partenaire    |");
+            System.out.println("|  3 : Remove Partenaire      |");
+            System.out.println("|  4 : Find a Partenaire      |");
+            System.out.println("|  5 : List All Partenaires   |");
+            System.out.println("|  6 : Return                 |");
+            System.out.println("|                             |");
+            System.out.println(" -----------------------------");
+            System.out.print("Enter Your Choice : ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+
+
+
+            switch (choice) {
+                case 1:
+                    createpartenair();
+                    break;
+                case 2:
+                    modifypartenaire();
+                    break;
+                case 3:
+                    removepartenair();
+                    break;
+                case 4:
+                    findOnePartenaire();
+                    break;
+                case 5:
+                    AllPartners();
+                    break;
+
+                case 6:
+                    return;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+
+
         }
+
+
     }
 
     public static void createpartenair() throws InterruptedException {
@@ -104,6 +120,8 @@ public class Main {
             System.out.println(type);
         }
         Partenaire.TypeTransport typeTransport = null;
+
+
         while (typeTransport == null) {
             String typeTransportStr = scanner.nextLine().toUpperCase();
             try {
@@ -140,7 +158,7 @@ public class Main {
 
 
         Partenaire partenaire = new Partenaire(nom_compagnie, contact_commercial, typeTransport, zoneGeographique, conditionsSpeciales, statutPartenaire , date_creation);
-        // Save the partenaire object to the database here
+
         System.out.println("Partenaire " + partenaire.getNomCompagnie() + " succefully created.");
         Thread.sleep(2000);
     }
@@ -489,21 +507,134 @@ public class Main {
 
 
     public static void choicegestionDucontrats() {
-        System.out.println();
-        System.out.println(" -----------------------------");
-        System.out.println("|                             |");
-        System.out.println("|       Gestion Contracts     |");
-        System.out.println("|  1 : Add Contract           |");
-        System.out.println("|  2 : Modifier Contract      |");
-        System.out.println("|  3 : Remove Contract        |");
-        System.out.println("|  4 : Find a Contract        |");
-        System.out.println("|  5 : List All Contracts     |");
-        System.out.println("|  6 : Return                 |");
-        System.out.println("|                             |");
-        System.out.println(" -----------------------------");
-        System.out.print("Enter Your Choice : ");
-        int choice = scanner.nextInt();
+
+
+       while(true) {
+           System.out.println();
+           System.out.println(" -----------------------------");
+           System.out.println("|                             |");
+           System.out.println("|       Gestion Contracts     |");
+           System.out.println("|  1 : Add Contract           |");
+           System.out.println("|  2 : Modifier Contract      |");
+           System.out.println("|  3 : Remove Contract        |");
+           System.out.println("|  4 : Find a Contract        |");
+           System.out.println("|  5 : List All Contracts     |");
+           System.out.println("|  6 : Return                 |");
+           System.out.println("|                             |");
+           System.out.println(" -----------------------------");
+           System.out.print("Enter Your Choice : ");
+           int choice = scanner.nextInt();
+           scanner.nextLine();
+
+
+
+           switch (choice) {
+               case 1:
+                   AddContract();
+                   break;
+           }
+       }
+
+
+
+    }
+
+
+
+    public static void AddContract() {
+        System.out.println("So welcome Sir to the contrat adding system . i wil be ur guide for this one and im happy to do so!");
+        System.out.println("First of all you should give the partner id associated with this contrat we building");
+        int partenaireId = scanner.nextInt();
         scanner.nextLine();
+
+
+
+        LocalDate date_debut = null;
+        LocalDate date_fin = null;
+
+
+        while (date_debut == null) {
+            System.out.println("Enter the start date for the contract (YYYY-MM-DD):");
+            String dateDebutString = scanner.nextLine();
+            try {
+                date_debut = LocalDate.parse(dateDebutString);
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format. Please use YYYY-MM-DD.");
+            }
+        }
+
+
+        while (date_fin == null) {
+            System.out.println("Enter the end date for the contract (YYYY-MM-DD):");
+            String dateFinString = scanner.nextLine();
+            try {
+                date_fin = LocalDate.parse(dateFinString);
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format. Please use YYYY-MM-DD.");
+            }
+        }
+
+
+
+
+
+        System.out.println("Now you may enter a tarif special for the contrat");
+        Float tarif_special = null;
+        while (tarif_special == null) {
+            try {
+                tarif_special = scanner.nextFloat();
+                scanner.nextLine();
+            } catch (Exception e) {
+                System.out.println("Invalid input. Please enter a valid float value.");
+                scanner.nextLine();
+            }
+        }
+
+
+
+        System.out.println("And also you should enter a conditons accord for the contrats");
+        String conditions_accord = scanner.nextLine();
+
+
+
+
+
+        System.out.println("Is this contract renewable? (true/false):");
+        boolean renouvelable = false;
+        while (!scanner.hasNextBoolean()) {
+            System.out.println("Invalid input. Please enter 'true' or 'false'.");
+            scanner.next();
+        }
+        renouvelable = scanner.nextBoolean();
+        scanner.nextLine();
+
+
+
+
+        System.out.println("Choose a contrat statut from those examples " + Arrays.toString(Contrats.statut_contrat.values()));
+
+        Contrats.statut_contrat statut_contrat = null;
+
+        while(statut_contrat == null) {
+            String statut_contratstr = scanner.nextLine().toLowerCase();
+
+            try {
+                statut_contrat = Contrats.statut_contrat.valueOf(statut_contratstr);
+
+            }catch (IllegalArgumentException e){
+                System.out.println("invalid contrat statut . Defaulting to encours");
+                statut_contrat = Contrats.statut_contrat.encours;
+            }
+            statut_contrat = Contrats.statut_contrat.valueOf(statut_contratstr);
+        }
+
+
+
+
+
+        Contrats contrat = new Contrats(date_debut,date_fin,tarif_special,conditions_accord,renouvelable,statut_contrat,partenaireId);
+
+
     }
 
     /*
