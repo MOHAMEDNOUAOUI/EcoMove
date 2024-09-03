@@ -9,7 +9,7 @@ public class Partenaire {
     private UUID id;
     private String nom_compagnie;
     private String contact_commercial;
-    private TypeTransport type_transport;
+        private TypeTransport type_transport;
     private String zone_geographique;
     private String conditions_speciales;
     private StatutPartenaire statut_partenaire;

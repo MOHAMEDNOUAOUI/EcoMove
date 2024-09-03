@@ -62,16 +62,16 @@ public class Contrats {
             conn = Database.getConnection();
 
             String sql = "INSERT INTO contrats (id , date_debut , date_fin , tarif_special , conditions_accord , renouvelable , statut_contrat , partenaireid) " +
-                    "VALUES (? ,?, ?, ?, ?, ?, ?::StatutContrat, ?)";
+                    "VALUES (? ,?, ?, ?, ?, ?, ?::statut_contrat, ?)";
 
             pstmt = conn.prepareStatement(sql);
             pstmt.setObject(1, id);
             pstmt.setDate(2, java.sql.Date.valueOf(String.valueOf(date_debut)));
             pstmt.setDate(3, java.sql.Date.valueOf(String.valueOf(date_fin)));
-            pstmt.setFloat(4, tarif_special);  // Assuming `type_transport` is a valid enum
+            pstmt.setFloat(4, tarif_special);
             pstmt.setString(5, conditions_accord);
             pstmt.setBoolean(6, renouvelable);
-            pstmt.setString(7, statut_contrat.name()); // Assuming `statut_partenaire` is a valid enum
+            pstmt.setString(7, statut_contrat.name());
             pstmt.setObject(8, partenaire.getId());
             pstmt.executeUpdate();
 

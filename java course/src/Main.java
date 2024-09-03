@@ -1122,7 +1122,7 @@ public class Main {
 
             switch (choice) {
                 case 1:
-                    AddOffre();
+//                    AddOffre();
                     break;
 
 
@@ -1177,7 +1177,41 @@ public class Main {
                        System.out.println("And for the valeur reduction");
                        int valeur_reduction = scanner.nextInt();
 
-                       System.out.println("Choose an offer type : ( " + Arrays.toString()  + ")");
+                       System.out.println("Choose an offer statut : ( " + Arrays.toString(Offres.StatutOffre.values())  + ")");
+
+
+                       Offres.StatutOffre statut_offre = null;
+
+                       while(statut_offre == null) {
+                           String statut_offreStr = scanner.nextLine().toLowerCase();
+
+                           try {
+                               statut_offre = Offres.StatutOffre.valueOf(statut_offreStr);
+
+                           }catch (IllegalArgumentException e){
+                               System.out.println("invalid contrat statut . Defaulting to encours");
+                               statut_offre = Offres.StatutOffre.ACTIVE;
+                           }
+                           statut_offre = Offres.StatutOffre.valueOf(statut_offreStr);
+                       }
+
+                       System.out.println("Choose an offer reduction type : ( " + Arrays.toString(Offres.TypeReduction.values())  + ")");
+
+
+                       Offres.TypeReduction type_reduction = null;
+
+                       while(statut_offre == null) {
+                           String type_reductionStr = scanner.nextLine().toLowerCase();
+
+                           try {
+                               type_reduction = Offres.TypeReduction.valueOf(type_reductionStr);
+
+                           }catch (IllegalArgumentException e){
+                               System.out.println("invalid contrat statut . Defaulting to encours");
+                               type_reduction = Offres.TypeReduction.MONTANTFIX;
+                           }
+                           type_reduction = Offres.TypeReduction.valueOf(type_reductionStr);
+                       }
 
 
 
@@ -1190,7 +1224,6 @@ public class Main {
                }
 
     }
-
 
 
 }

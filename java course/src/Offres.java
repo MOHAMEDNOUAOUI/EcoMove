@@ -22,8 +22,8 @@ public class Offres {
 
     private Contrats contrat;
 
-    private enum TypeReduction {POURECENTAGE , MONTANTFIX }
-    private enum StatutOffre {ACTIVE , EXPIREE , SUSPENDU};
+    enum TypeReduction {POURECENTAGE , MONTANTFIX }
+    enum StatutOffre {ACTIVE , EXPIREE , SUSPENDU};
 
 
     private Offres (UUID id , String nom_offre , String description , LocalDateTime date_debut , LocalDateTime date_fin ,  int valeur_reduction  , StatutOffre statut_offre , String conditions , TypeReduction type_reduction , Contrats contrats) throws SQLException, ClassNotFoundException {
