@@ -1,3 +1,4 @@
+import javax.swing.plaf.synth.SynthTextAreaUI;
 import javax.xml.crypto.Data;
 import java.awt.*;
 import java.sql.*;
@@ -6,6 +7,7 @@ import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.UUID;
 
 public class Main {
 
@@ -141,6 +143,8 @@ public class Main {
         for (Partenaire.StatutPartenaire statut : Partenaire.StatutPartenaire.values()) {
             System.out.println(statut);
         }
+
+
         Partenaire.StatutPartenaire statutPartenaire = null;
         while (statutPartenaire == null) {
             String statutPartenaireStr = scanner.nextLine().toUpperCase();
@@ -156,7 +160,6 @@ public class Main {
         LocalDate date_creation = LocalDate.now();  ;
 
 
-
         Partenaire partenaire = new Partenaire(nom_compagnie, contact_commercial, typeTransport, zoneGeographique, conditionsSpeciales, statutPartenaire , date_creation);
 
         System.out.println("Partenaire " + partenaire.getNomCompagnie() + " succefully created.");
@@ -168,9 +171,10 @@ public class Main {
     public static void removepartenair() throws SQLException, ClassNotFoundException, InterruptedException {
         System.out.println("First of all, we shall check if we have this partenaire in our database.");
         System.out.println("Could you please give me the ID of the partenaire?");
-        int id = scanner.nextInt();
+        String idString = scanner.nextLine();
         scanner.nextLine();
 
+        UUID id = UUID.fromString(idString);
        Partenaire partenaire =  Partenaire.findPartenaireById(id);
 
        if (partenaire == null) {
@@ -210,19 +214,19 @@ public class Main {
     public static void AllPartners() throws SQLException, ClassNotFoundException, InterruptedException {
 
 
-        int idWidth = 5;
+        // Set fixed widths for each column
+        int idWidth = 36; // UUID length
         int nameWidth = 20;
         int contactWidth = 20;
-        int typeWidth = 10;
+        int typeWidth = 15;
         int zoneWidth = 15;
-        int conditionsWidth = 25;
+        int conditionsWidth = 30;
         int statutWidth = 10;
-        int dateWidth = 15;
+        int dateWidth = 12;
 
 
 
 
-        // Print the table header
         System.out.printf("| %-"+idWidth+"s | %-"+nameWidth+"s | %-"+contactWidth+"s | %-"+typeWidth+"s | %-"+zoneWidth+"s | %-"+conditionsWidth+"s | %-"+statutWidth+"s | %-"+dateWidth+"s |\n",
                 "ID", "Compagnie", "Contact", "Transport", "Zone", "Conditions", "Statut", "Date");
         System.out.println(new String(new char[idWidth + nameWidth + contactWidth + typeWidth + zoneWidth + conditionsWidth + statutWidth + dateWidth + 11]).replace('\0', '-'));
@@ -231,7 +235,7 @@ public class Main {
         List<Partenaire> partenaires = Partenaire.getAllPartenaires();
 
         for (Partenaire partenaire : partenaires) {
-            System.out.printf("| %-"+idWidth+"d | %-"+nameWidth+"s | %-"+contactWidth+"s | %-"+typeWidth+"s | %-"+zoneWidth+"s | %-"+conditionsWidth+"s | %-"+statutWidth+"s | %-"+dateWidth+"s |\n",
+            System.out.printf("| %-"+idWidth+"s | %-"+nameWidth+"s | %-"+contactWidth+"s | %-"+typeWidth+"s | %-"+zoneWidth+"s | %-"+conditionsWidth+"s | %-"+statutWidth+"s | %-"+dateWidth+"s |\n",
                     partenaire.getId(),
                     truncate(partenaire.getNomCompagnie(), nameWidth),
                     truncate(partenaire.getContactCommercial(), contactWidth),
@@ -270,30 +274,40 @@ public class Main {
 
 
     // method to fix the sizes of the strings and columns
-    private static String truncate(String str, int width) {
-        if (str.length() > width - 3) {
-            return str.substring(0, width - 3) + "...";
+    private static String truncate(String value, int length) {
+        if (value.length() <= length) {
+            return value;
+        } else {
+            return value.substring(0, length - 3) + "..."; // Add ellipsis if truncated
         }
-        return str;
     }
 
 
     public static void findOnePartenaire() throws SQLException, ClassNotFoundException, InterruptedException {
         System.out.println("Enter Partenaire Id:");
-        int partenaireId = scanner.nextInt();
-        scanner.nextLine();
+        String partenaireId = scanner.nextLine();
 
 
-        int idWidth = 5;
+
+
+
+        UUID partenaireUUID = UUID.fromString(partenaireId);
+        Partenaire partenaire = Partenaire.findPartenaireById(partenaireUUID);
+
+
+        int idWidth = 36; // UUID length
         int nameWidth = 20;
         int contactWidth = 20;
-        int typeWidth = 10;
+        int typeWidth = 15;
         int zoneWidth = 15;
-        int conditionsWidth = 25;
+        int conditionsWidth = 30;
         int statutWidth = 10;
-        int dateWidth = 15;
+        int dateWidth = 12;
 
-        Partenaire partenaire = Partenaire.findPartenaireById(partenaireId);
+
+
+
+
 
         if (partenaire != null) {
 
@@ -304,7 +318,6 @@ public class Main {
 
 
 
-            // Print the table header
             System.out.printf("| %-"+idWidth+"s | %-"+nameWidth+"s | %-"+contactWidth+"s | %-"+typeWidth+"s | %-"+zoneWidth+"s | %-"+conditionsWidth+"s | %-"+statutWidth+"s | %-"+dateWidth+"s |\n",
                     "ID", "Compagnie", "Contact", "Transport", "Zone", "Conditions", "Statut", "Date");
             System.out.println(new String(new char[idWidth + nameWidth + contactWidth + typeWidth + zoneWidth + conditionsWidth + statutWidth + dateWidth + 11]).replace('\0', '-'));
@@ -317,7 +330,7 @@ public class Main {
 
 
 
-            System.out.printf("| %-"+idWidth+"d | %-"+nameWidth+"s | %-"+contactWidth+"s | %-"+typeWidth+"s | %-"+zoneWidth+"s | %-"+conditionsWidth+"s | %-"+statutWidth+"s | %-"+dateWidth+"s |\n",
+            System.out.printf("| %-"+idWidth+"s | %-"+nameWidth+"s | %-"+contactWidth+"s | %-"+typeWidth+"s | %-"+zoneWidth+"s | %-"+conditionsWidth+"s | %-"+statutWidth+"s | %-"+dateWidth+"s |\n",
                     partenaire.getId(),
                     truncate(partenaire.getNomCompagnie(), nameWidth),
                     truncate(partenaire.getContactCommercial(), contactWidth),
@@ -326,6 +339,48 @@ public class Main {
                     truncate(partenaire.getConditionsSpeciales(), conditionsWidth),
                     partenaire.getStatutPartenaire().name(),
                     partenaire.getDateCreation().toLocalDate().toString());
+            System.out.println("--------------------------------------------------------------------------------------------------------------------------------------------");
+            System.out.println();
+            System.out.println("All the contrats associated to this Partenaire are below");
+            System.out.println();
+
+
+
+
+
+
+            List<Contrats> contrats = partenaire.GetContrats();
+            if(contrats != null && !contrats.isEmpty())
+            {
+
+
+
+                System.out.printf("| %-"+idWidth+"s | %-"+dateWidth+"s | %-"+dateWidth+"s | %-"+typeWidth+"s | %-"+statutWidth+"s | %-"+conditionsWidth+"s |\n",
+                        "ID", "DATE_DEBUT", "DATE_FIN", "TARIF_SPECIAL", "STATUT_CONTRAT", "CONDITION_SPECIAL");
+                System.out.println(new String(new char[idWidth + dateWidth + dateWidth + typeWidth + statutWidth + conditionsWidth + 11]).replace('\0', '-'));
+
+
+
+
+
+
+
+                for(Contrats contrat : contrats){
+                    System.out.printf("| %-"+idWidth+"s | %-"+dateWidth+"s | %-"+dateWidth+"s | %-"+typeWidth+"s | %-"+statutWidth+"s | %-"+conditionsWidth+"s |\n",
+                            contrat.getId(),
+                            truncate(contrat.getDate_debut().toString() , dateWidth),
+                            truncate(contrat.getDate_fin().toString() , dateWidth),
+                            contrat.getTarif_special(),
+                            truncate(contrat.getStatut_contrat().name() , statutWidth),
+                            truncate(contrat.getConditions_accord(), conditionsWidth));
+
+                    System.out.println("--------------------------------------------------------------------------------------------------------------------------------------------");
+                    System.out.println();
+                }
+            }
+            else {
+                System.out.println("No contracts associated with this Partenaire.");
+            }
 
 
             boolean check = false;
@@ -360,8 +415,7 @@ public class Main {
 
     public static void modifypartenaire() throws SQLException, ClassNotFoundException, InterruptedException {
         System.out.println("Enter Partenaire Id:");
-        int partenaireId = scanner.nextInt();
-        scanner.nextLine();
+        String partenaireId = scanner.nextLine();
 
 
         Connection conn = null;
@@ -374,8 +428,8 @@ public class Main {
 
 
 
-
-        Partenaire partenaire = Partenaire.findPartenaireById(partenaireId);
+        UUID PartenaireUUID =UUID.fromString(partenaireId);
+        Partenaire partenaire = Partenaire.findPartenaireById(PartenaireUUID);
 
        if(partenaire != null) {
 
@@ -406,7 +460,7 @@ public class Main {
                    {
                        System.out.print("Enter The new compagnie name : ");
                        String value = scanner.nextLine();
-                       Partenaire.ModifyPartner(partenaireId , "nom_compagnie" , value );
+                       Partenaire.ModifyPartner(PartenaireUUID , "nom_compagnie" , value );
                        Thread.sleep(2000);
                        break;
                    }
@@ -415,7 +469,7 @@ public class Main {
 
                        System.out.print("Enter The new Contact Commercial : ");
                        String value = scanner.nextLine();
-                       Partenaire.ModifyPartner(partenaireId , "contact_commercial" , value );
+                       Partenaire.ModifyPartner(PartenaireUUID , "contact_commercial" , value );
                        Thread.sleep(2000);
                        break;
 
@@ -427,7 +481,7 @@ public class Main {
                    case 3 : {
                        System.out.print("Enter The new type_transport : " + Arrays.toString(Partenaire.TypeTransport.values()));
                        String value = scanner.nextLine();
-                       Partenaire.ModifyPartner(partenaireId , "type_transport" , value );
+                       Partenaire.ModifyPartner(PartenaireUUID , "type_transport" , value );
                        Thread.sleep(2000);
                        break;
                    }
@@ -435,7 +489,7 @@ public class Main {
                    case 4 : {
                        System.out.print("Enter The new zone_geographique: ");
                        String value = scanner.nextLine();
-                       Partenaire.ModifyPartner(partenaireId , "zone_geographique" , value );
+                       Partenaire.ModifyPartner(PartenaireUUID, "zone_geographique" , value );
                        Thread.sleep(2000);
                        break;
                    }
@@ -443,7 +497,7 @@ public class Main {
                    case 5 : {
                        System.out.print("Enter The new conditions_speciales: ");
                        String value = scanner.nextLine();
-                       Partenaire.ModifyPartner(partenaireId , "conditions_speciales" , value );
+                       Partenaire.ModifyPartner(PartenaireUUID , "conditions_speciales" , value );
                        Thread.sleep(2000);
                        break;
                    }
@@ -451,7 +505,7 @@ public class Main {
                    case 6 : {
                        System.out.print("Enter The new statut_partenaire: " + Arrays.toString(Partenaire.StatutPartenaire.values()));
                        String value = scanner.nextLine();
-                       Partenaire.ModifyPartner(partenaireId , "statut_partenaire" , value );
+                       Partenaire.ModifyPartner(PartenaireUUID, "statut_partenaire" , value );
                        Thread.sleep(2000);
                        break;
                    }
@@ -462,7 +516,7 @@ public class Main {
                        String value = scanner.nextLine();
 
                        Date newdate = Date.valueOf(value);
-                       Partenaire.ModifyPartner(partenaireId , "date_creation" , String.valueOf(newdate));
+                       Partenaire.ModifyPartner(PartenaireUUID , "date_creation" , String.valueOf(newdate));
                        Thread.sleep(2000);
                        break;
                    }
@@ -506,10 +560,12 @@ public class Main {
      */
 
 
-    public static void choicegestionDucontrats() {
+    public static void choicegestionDucontrats() throws SQLException, ClassNotFoundException, InterruptedException {
 
 
-       while(true) {
+        boolean check = false;
+
+       while(check == false) {
            System.out.println();
            System.out.println(" -----------------------------");
            System.out.println("|                             |");
@@ -532,6 +588,30 @@ public class Main {
                case 1:
                    AddContract();
                    break;
+
+               case 2:
+                   ModifyContrat();
+                   break;
+
+               case 3:
+                   DeleteContrat();
+                   break;
+
+               case 4:
+                   FindOneContrat();
+                   break;
+
+               case 5:
+                   FindAllContrats();
+                   break;
+
+
+
+               case 6:
+                   return;
+
+               default:
+                   System.out.println("Invalid Choice , Please try again ");
            }
        }
 
@@ -541,11 +621,9 @@ public class Main {
 
 
 
-    public static void AddContract() {
-        System.out.println("So welcome Sir to the contrat adding system . i wil be ur guide for this one and im happy to do so!");
-        System.out.println("First of all you should give the partner id associated with this contrat we building");
-        int partenaireId = scanner.nextInt();
-        scanner.nextLine();
+    public static void AddContract() throws SQLException, ClassNotFoundException {
+        System.out.println("So welcome Sir to the contrat adding system . i will be ur guide for this one and im happy to do so!");
+
 
 
 
@@ -554,7 +632,7 @@ public class Main {
 
 
         while (date_debut == null) {
-            System.out.println("Enter the start date for the contract (YYYY-MM-DD):");
+            System.out.println("First of all you should Enter the start date for the contract (YYYY-MM-DD):");
             String dateDebutString = scanner.nextLine();
             try {
                 date_debut = LocalDate.parse(dateDebutString);
@@ -611,31 +689,377 @@ public class Main {
 
 
 
-        System.out.println("Choose a contrat statut from those examples " + Arrays.toString(Contrats.statut_contrat.values()));
+        System.out.println("Choose a contrat statut from those examples " + Arrays.toString(Contrats.StatutContrat.values()));
 
-        Contrats.statut_contrat statut_contrat = null;
+        Contrats.StatutContrat statut_contrat = null;
 
         while(statut_contrat == null) {
             String statut_contratstr = scanner.nextLine().toLowerCase();
 
             try {
-                statut_contrat = Contrats.statut_contrat.valueOf(statut_contratstr);
+                statut_contrat = Contrats.StatutContrat.valueOf(statut_contratstr);
 
             }catch (IllegalArgumentException e){
                 System.out.println("invalid contrat statut . Defaulting to encours");
-                statut_contrat = Contrats.statut_contrat.encours;
+                statut_contrat = Contrats.StatutContrat.encours;
             }
-            statut_contrat = Contrats.statut_contrat.valueOf(statut_contratstr);
+            statut_contrat = Contrats.StatutContrat.valueOf(statut_contratstr);
+        }
+
+
+
+        System.out.println("Now all you have to do is to provide me with the partner id associated with this contrat we building");
+
+
+        Partenaire partenaire = null;
+
+        while(partenaire == null){
+
+            try{
+                String partenaireId  = scanner.nextLine();
+                UUID partenaireUUID = UUID.fromString(partenaireId);
+                partenaire = Partenaire.findPartenaireById(partenaireUUID);
+            }catch (IllegalArgumentException e) {
+                System.out.println("Can you try again we couldnt find the partenaire you looking for ");
+            }
+
+
+
+        }
+
+        Contrats contrat = new Contrats(date_debut,date_fin,tarif_special,conditions_accord,renouvelable,statut_contrat,partenaire);
+
+
+    }
+
+
+
+    public static void FindAllContrats() throws SQLException, ClassNotFoundException, InterruptedException {
+
+        int idWidth = 36; // UUID length
+        int nameWidth = 20;
+        int contactWidth = 20;
+        int typeWidth = 15;
+        int zoneWidth = 15;
+        int conditionsWidth = 30;
+        int statutWidth = 14;
+        int dateWidth = 12;
+
+
+        System.out.printf("| %-" + idWidth + "s | %-" + dateWidth + "s | %-" + dateWidth + "s | %-" + typeWidth + "s | %-" + statutWidth + "s | %-" + conditionsWidth + "s| %-" + nameWidth + "s |\n",
+                "ID", "DATE_DEBUT", "DATE_FIN", "TARIF_SPECIAL", "STATUT_CONTRAT", "CONDITION_SPECIAL", "PARTENAIRE");
+        System.out.println(new String(new char[idWidth + dateWidth + dateWidth + typeWidth + statutWidth + conditionsWidth + nameWidth]).replace('\0', '-'));
+
+
+        List<Contrats> ContratsList = Contrats.GetAllContrats();
+
+        for (Contrats contrat : ContratsList) {
+            System.out.printf("| %-" + idWidth + "s | %-" + dateWidth + "s | %-" + dateWidth + "s | %-" + typeWidth + "s | %-" + statutWidth + "s | %-" + conditionsWidth + "s | %-" + nameWidth + "s |\n",
+                    contrat.getId(),
+                    truncate(contrat.getDate_debut().toString(), dateWidth),
+                    truncate(contrat.getDate_fin().toString(), dateWidth),
+                    contrat.getTarif_special(),
+                    contrat.getStatut_contrat().name(),
+                    truncate(contrat.getConditions_accord(), conditionsWidth),
+                    truncate(contrat.GetPartenaire().getNomCompagnie(), nameWidth)
+            );
+
+            System.out.println(new String(new char[idWidth + dateWidth + dateWidth + typeWidth + statutWidth + conditionsWidth + nameWidth + 11]).replace('\0', '-'));
+        }
+
+            boolean check = false;
+
+            System.out.println("Woud you like to leave ? type (quit)");
+
+            while (!check) {
+                String choice = scanner.nextLine().trim().toLowerCase();
+                if ("quit".equals(choice)) {
+                    System.out.println("Quitting.");
+                    System.out.println();
+
+                    Thread.sleep(2000);
+
+
+                    check = true;
+                } else {
+                    System.out.println("Alright Sir you choose what you wantt");
+                    System.out.println("if you changed your mind all you have to do is type (quit)");
+                }
+            }
+
+
         }
 
 
 
 
+        public static boolean FindOneContrat() throws ClassNotFoundException {
 
-        Contrats contrat = new Contrats(date_debut,date_fin,tarif_special,conditions_accord,renouvelable,statut_contrat,partenaireId);
+                System.out.println("Please give me the Contrat id");
+                String id = scanner.nextLine();
 
 
-    }
+            int idWidth = 36; // UUID length
+            int nameWidth = 20;
+            int contactWidth = 20;
+            int typeWidth = 15;
+            int zoneWidth = 15;
+            int conditionsWidth = 30;
+            int statutWidth = 14;
+            int dateWidth = 12;
+
+
+
+                UUID contratID = UUID.fromString(id);
+
+                Contrats contrat = Contrats.FindOneContrat(contratID);
+
+                if(contrat != null){
+
+
+                    System.out.printf("| %-" + idWidth + "s | %-" + dateWidth + "s | %-" + dateWidth + "s | %-" + typeWidth + "s | %-" + statutWidth + "s | %-" + conditionsWidth + "s| %-" + nameWidth + "s |\n",
+                            "ID", "DATE_DEBUT", "DATE_FIN", "TARIF_SPECIAL", "STATUT_CONTRAT", "CONDITION_SPECIAL", "PARTENAIRE");
+                    System.out.println(new String(new char[idWidth + dateWidth + dateWidth + typeWidth + statutWidth + conditionsWidth + nameWidth]).replace('\0', '-'));
+
+
+
+                    System.out.printf("| %-" + idWidth + "s | %-" + dateWidth + "s | %-" + dateWidth + "s | %-" + typeWidth + "s | %-" + statutWidth + "s | %-" + conditionsWidth + "s | %-" + nameWidth + "s |\n",
+                            contrat.getId(),
+                            truncate(contrat.getDate_debut().toString(), dateWidth),
+                            truncate(contrat.getDate_fin().toString(), dateWidth),
+                            contrat.getTarif_special(),
+                            truncate(contrat.getStatut_contrat().name(), statutWidth),
+                            truncate(contrat.getConditions_accord(), conditionsWidth),
+                            truncate(contrat.GetPartenaire().getNomCompagnie(), nameWidth)
+                    );
+
+
+
+                            System.out.println(new String(new char[idWidth + nameWidth + contactWidth + typeWidth + zoneWidth + conditionsWidth + statutWidth + dateWidth + 11]).replace('\0', '-'));
+
+
+
+                            return true;
+                }
+
+
+                return false;
+        }
+
+
+        public static void DeleteContrat() throws ClassNotFoundException, SQLException {
+                System.out.println("Please give me the id of the contrat");
+                String value = scanner.nextLine();
+
+                UUID idcontrat = UUID.fromString(value);
+                Contrats contrat = Contrats.FindOneContrat(idcontrat);
+
+
+
+            int idWidth = 36; // UUID length
+            int nameWidth = 20;
+            int contactWidth = 20;
+            int typeWidth = 15;
+            int zoneWidth = 15;
+            int conditionsWidth = 30;
+            int statutWidth = 14;
+            int dateWidth = 12;
+
+
+            if(contrat != null) {
+
+
+
+                System.out.printf("| %-" + idWidth + "s | %-" + dateWidth + "s | %-" + dateWidth + "s | %-" + typeWidth + "s | %-" + statutWidth + "s | %-" + conditionsWidth + "s| %-" + nameWidth + "s |\n",
+                        "ID", "DATE_DEBUT", "DATE_FIN", "TARIF_SPECIAL", "STATUT_CONTRAT", "CONDITION_SPECIAL", "PARTENAIRE");
+                System.out.println(new String(new char[idWidth + dateWidth + dateWidth + typeWidth + statutWidth + conditionsWidth + nameWidth]).replace('\0', '-'));
+
+
+
+                System.out.printf("| %-" + idWidth + "s | %-" + dateWidth + "s | %-" + dateWidth + "s | %-" + typeWidth + "s | %-" + statutWidth + "s | %-" + conditionsWidth + "s | %-" + nameWidth + "s |\n",
+                        contrat.getId(),
+                        truncate(contrat.getDate_debut().toString(), dateWidth),
+                        truncate(contrat.getDate_fin().toString(), dateWidth),
+                        contrat.getTarif_special(),
+                        contrat.getStatut_contrat().name(),
+                        truncate(contrat.getConditions_accord(), conditionsWidth),
+                        truncate(contrat.GetPartenaire().getNomCompagnie(), nameWidth)
+                );
+
+
+
+                System.out.println(new String(new char[idWidth + nameWidth + contactWidth + typeWidth + zoneWidth + conditionsWidth + statutWidth + dateWidth + 11]).replace('\0', '-'));
+
+
+
+
+
+                System.out.println();
+                System.out.println("Are you sure you want to delete this contrat ? (yes/no)");
+                String choice = scanner.nextLine().toLowerCase().trim();
+
+                if(choice.equals("yes")){
+                    Contrats.DeleteContrat(idcontrat);
+                }else{
+                    System.out.println("Alright Sir , if its not yes then its a noo :D");
+                }
+            }
+
+        }
+
+
+
+        public static void ModifyContrat() throws InterruptedException, SQLException, ClassNotFoundException {
+                        System.out.println("Alright first thing first is what is the contrat id you wanna modify ?");
+                        String contratIdString = scanner.nextLine();
+
+                        System.out.println("Alright ill go check if it exist , please wait a bit");
+                        Thread.sleep(4000);
+
+                        UUID idcontrat = UUID.fromString(contratIdString);
+                        Contrats contrat = Contrats.FindOneContrat(idcontrat);
+
+                        if(contrat != null) {
+                            System.out.println("Alright Sir it defenityl exist , please look at the menu and choose what you wantt");
+
+
+                            boolean check = false;
+
+                            while(!check) {
+                                System.out.println();
+                                System.out.println(" -----------------------------");
+                                System.out.println("|       Modification Kit      |");
+                                System.out.println("|                             |");
+                                System.out.println("|  1 : Date_debut             |");
+                                System.out.println("|  2 : Date_fin               |");
+                                System.out.println("|  3 : tarif_special          |");
+                                System.out.println("|  4 : conditions_accord      |");
+                                System.out.println("|  5 : renouvelable           |");
+                                System.out.println("|  6 : statut_contrat         |");
+                                System.out.println("|  7 : Partenaire             |");
+                                System.out.println("|  8 : leave                  |");
+                                System.out.println("|                             |");
+                                System.out.println(" -----------------------------");
+                                System.out.print("Enter Your Choice : ");
+                                int choice = scanner.nextInt();
+                                scanner.nextLine();
+
+                                switch (choice) {
+                                    case 1:
+                                    {
+                                        System.out.println("The current date_debut is " + contrat.getDate_debut());
+                                        System.out.print("Enter The new date_debut : ");
+                                        String value = scanner.nextLine();
+                                        Contrats.ModifierContrat(idcontrat , "date_debut" , value );
+                                        contrat.setDate_debut(value);
+                                        Thread.sleep(2000);
+                                        break;
+                                    }
+
+                                    case 2 : {
+
+                                        System.out.println("The current date_fin is " + contrat.getDate_fin());
+                                        System.out.print("Enter The new date : ");
+                                        String value = scanner.nextLine();
+                                        Contrats.ModifierContrat(idcontrat , "date_fin" , value );
+                                        contrat.setDate_fin(value);
+                                        Thread.sleep(2000);
+
+
+
+
+                                        break;
+                                    }
+
+                                    case 3 : {
+
+                                        System.out.println("The current tarif special is " + contrat.getTarif_special());
+                                        System.out.print("Enter The new tarif special : ");
+                                        String value = scanner.nextLine();
+                                        Contrats.ModifierContrat(idcontrat , "tarif_special" , value );
+                                        contrat.setTarif_special(Float.parseFloat(value));
+                                        Thread.sleep(2000);
+
+
+
+
+
+                                        break;
+                                    }
+
+                                    case 4 : {
+                                        System.out.println("The current conditions_accord is :  " + contrat.getConditions_accord());
+                                        System.out.print("Enter The new conditions_accord : ");
+                                        String value = scanner.nextLine();
+                                        Contrats.ModifierContrat(idcontrat , "conditions_accord" , value );
+                                        contrat.setConditions_accord(value);
+                                        Thread.sleep(2000);
+
+                                        break;
+                                    }
+
+                                    case 5 : {
+
+
+
+                                        System.out.println("The current renouvelable is :  " + contrat.isRenouvelable());
+                                        System.out.print("Enter The new renouvelable type : ");
+                                        String value = scanner.nextLine();
+                                        Contrats.ModifierContrat(idcontrat , "renouvelable" , value );
+                                        contrat.setRenouvelable(Boolean.parseBoolean(value));
+                                        Thread.sleep(2000);
+
+                                        break;
+                                    }
+
+                                    case 6 : {
+
+                                        System.out.println("The current Statut of the contrat is :  " + contrat.getStatut_contrat());
+                                        System.out.print("Enter The new Statut of the contrat (" + Arrays.toString(Contrats.StatutContrat.values()) + ")");
+                                        String value = scanner.nextLine();
+                                        Contrats.ModifierContrat(idcontrat , "statut_contrat" , value );
+                                        contrat.setStatut_contrat(Contrats.StatutContrat.valueOf(value));
+                                        Thread.sleep(2000);
+
+                                        break;
+                                    }
+
+
+                                    case 7 : {
+
+                                        System.out.println("The current Partenaire is :  " + contrat.GetPartenaire().getNomCompagnie());
+                                        System.out.print("Enter The new Partenaire id is : ");
+                                        String value = scanner.nextLine();
+                                        Contrats.ModifierContrat(idcontrat , "partenaireid" , value );
+                                        Partenaire partenaire = Partenaire.findPartenaireById(UUID.fromString(value));
+                                        contrat.setPartenaire(partenaire);
+                                        Thread.sleep(2000);
+
+                                        break;
+                                    }
+
+
+
+
+                                    case 8 :
+                                        return;
+                                    default:
+                                        System.out.println("invalid Choice Please try again");
+                                }
+
+
+                            }
+
+
+
+
+                        }
+                        else {
+                            System.out.println("Sorry we couldnt find this contrat id");
+                        }
+            }
+
+
 
     /*
 
