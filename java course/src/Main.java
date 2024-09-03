@@ -3,6 +3,7 @@ import javax.xml.crypto.Data;
 import java.awt.*;
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.List;
@@ -37,6 +38,9 @@ public class Main {
                     case 2:
                         choicegestionDucontrats();
                         break;
+                case 3:
+                    choicegestionOffres();
+                    break;
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
@@ -1065,4 +1069,128 @@ public class Main {
 
     Ends of Contrat Area
      */
+
+
+
+
+
+    /*
+
+
+
+░█████╗░███████╗███████╗██████╗░███████╗░██████╗
+██╔══██╗██╔════╝██╔════╝██╔══██╗██╔════╝██╔════╝
+██║░░██║█████╗░░█████╗░░██████╔╝█████╗░░╚█████╗░
+██║░░██║██╔══╝░░██╔══╝░░██╔══██╗██╔══╝░░░╚═══██╗
+╚█████╔╝██║░░░░░██║░░░░░██║░░██║███████╗██████╔╝
+░█████╗░███████╗███████╗██████╗░███████╗░██████╗
+
+░██████╗██████╗░███████╗░█████╗░██╗░█████╗░██╗░░░░░███████╗░██████╗
+██╔════╝██╔══██╗██╔════╝██╔══██╗██║██╔══██╗██║░░░░░██╔════╝██╔════╝
+╚█████╗░██████╔╝█████╗░░██║░░╚═╝██║███████║██║░░░░░█████╗░░╚█████╗░
+░╚═══██╗██╔═══╝░██╔══╝░░██║░░██╗██║██╔══██║██║░░░░░██╔══╝░░░╚═══██╗
+██████╔╝██║░░░░░███████╗╚█████╔╝██║██║░░██║███████╗███████╗██████╔╝
+╚═════╝░╚═╝░░░░░╚══════╝░╚════╝░╚═╝╚═╝░░╚═╝╚══════╝╚══════╝╚═════╝░
+
+     */
+
+
+
+
+    public static  void choicegestionOffres() throws SQLException , ClassNotFoundException {
+
+        boolean check = false;
+
+        while(check == false) {
+            System.out.println();
+            System.out.println(" -----------------------------");
+            System.out.println("|                             |");
+            System.out.println("|       Gestion Offres        |");
+            System.out.println("|  1 : Add Offres             |");
+            System.out.println("|  2 : Modifier Offre         |");
+            System.out.println("|  3 : Remove Offre           |");
+            System.out.println("|  4 : Find an offre          |");
+            System.out.println("|  5 : List All Offers        |");
+            System.out.println("|  6 : Return                 |");
+            System.out.println("|                             |");
+            System.out.println(" -----------------------------");
+            System.out.print("Enter Your Choice : ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+
+
+            switch (choice) {
+                case 1:
+                    AddOffre();
+                    break;
+
+
+
+
+                case 6:
+                    return;
+
+                default:
+                    System.out.println("Invalid Choice , Please try again ");
+            }
+        }
+
+
+
+
+
+
+    }
+
+
+
+    /// ADD OFFREES
+
+    public static void AddOffre() throws ClassNotFoundException {
+        System.out.println();
+                System.out.println("Welcome to Offre creating System");
+                System.out.println();
+                System.out.println("To start ill be asking you for some informations to establish first likee , which contrat this offre belongs and so.");
+                System.out.println("So i would like you to give me the Contract id : ");
+                String value = scanner.nextLine();
+
+                Contrats contrat = Contrats.FindOneContrat(UUID.fromString(value));
+
+                boolean choice = false;
+
+               while(!choice) {
+                   if(contrat != null) {
+
+                       System.out.println("First we shall give this offer a name : ");
+                       String nom_offre = scanner.nextLine();
+
+                       System.out.println("A little description : ");
+                       String description = scanner.nextLine();
+
+                       System.out.println("Now ill ass you for the debut date for the offer");
+                       LocalDate date_debut = LocalDate.parse(scanner.nextLine());
+
+                       System.out.println("Now ill ass you for the fin date for the offer");
+                       LocalDate date_fin = LocalDate.parse(scanner.nextLine());
+
+                       System.out.println("And for the valeur reduction");
+                       int valeur_reduction = scanner.nextInt();
+
+                       System.out.println("Choose an offer type : ( " + Arrays.toString()  + ")");
+
+
+
+
+
+                       return;
+                   }else {
+                       System.out.println("Sorry Sir this Contract doesnt exist at all , Please try again");
+                   }
+               }
+
+    }
+
+
+
 }

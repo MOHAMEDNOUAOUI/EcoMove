@@ -17,6 +17,7 @@ public class Contrats {
     private StatutContrat statut_contrat;
     private Partenaire partenaire;
 
+    private List<Offres> offres;
 
 
     public enum StatutContrat {encours,termine, suspendu};
