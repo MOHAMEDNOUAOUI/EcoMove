@@ -4,6 +4,8 @@ import javax.xml.crypto.Data;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -22,11 +24,11 @@ public class Offres {
 
     private Contrats contrat;
 
-    private enum TypeReduction {POURECENTAGE , MONTANTFIX }
-    private enum StatutOffre {ACTIVE , EXPIREE , SUSPENDU};
+    public enum TypeReduction {POURECENTAGE,MONTANTFIX}
+    public enum StatutOffre {ACTIVE,EXPIREE,SUSPENDU};
 
 
-    private Offres (UUID id , String nom_offre , String description , LocalDateTime date_debut , LocalDateTime date_fin ,  int valeur_reduction  , StatutOffre statut_offre , String conditions , TypeReduction type_reduction , Contrats contrats) throws SQLException, ClassNotFoundException {
+    public Offres (UUID id ,String nom_offre , String description , LocalDate date_debut , LocalDate date_fin ,  int valeur_reduction  ,String conditions ,  TypeReduction type_reduction ,  StatutOffre statut_offre   , Contrats contrats) throws SQLException, ClassNotFoundException {
         this.id = UUID.randomUUID();
         this.nom_offre = nom_offre;
         this.description = description;
@@ -36,20 +38,21 @@ public class Offres {
         this.conditions = conditions;
         this.type_reduction = type_reduction;
         this.statut_offre = statut_offre;
+        this.contrat = contrats;
     }
 
 
-    private Offres (String nom_offre , String description , LocalDateTime date_debut , LocalDateTime date_fin ,  int valeur_reduction  , StatutOffre statut_offre ,  String conditions ,  TypeReduction type_reduction , Contrats contrats) throws SQLException, ClassNotFoundException {
+    public Offres (String nom_offre , String description , LocalDate date_debut , LocalDate date_fin ,  int valeur_reduction  ,String conditions ,  TypeReduction type_reduction ,  StatutOffre statut_offre   , Contrats contrats) throws SQLException, ClassNotFoundException {
                     this.id = UUID.randomUUID();
                     this.nom_offre = nom_offre;
+                     this.date_debut = LocalDate.from(date_debut);
+                     this.date_fin = LocalDate.from(date_fin);
                     this.description = description;
-                    this.date_debut = LocalDate.from(date_debut);
-                    this.date_fin = LocalDate.from(date_fin);
                     this.valeur_reduction = valeur_reduction;
                     this.conditions = conditions;
                     this.type_reduction = type_reduction;
                     this.statut_offre = statut_offre;
-
+                this.contrat = contrats;
 
                     addToDatabase();
     }
@@ -60,9 +63,12 @@ public class Offres {
         PreparedStatement pstmt = null;
 
 
+
+
+
         try {
             conn = Database.getConnection();
-            String sql = "INSERT INTO OFFERS (id , nom_offre , description , date_debut , date_fin , valeur_reduction , conditions , statut_offre , type_reduction , contratid ) VALUES (?,?,?,?,?,?,?,?::StatutOffre,?::TypeReduction,?)";
+            String sql = "INSERT INTO OFFRES (id , nom_offre , description , date_debut , date_fin , valeur_reduction , conditions , statut_offre , type_reduction , contratid ) VALUES (?,?,?,?,?,?,?,?::statut_offre,?::type_reduction,?)";
             pstmt = conn.prepareStatement(sql);
             pstmt.setObject(1 , id);
             pstmt.setString(2 , nom_offre);
@@ -74,6 +80,8 @@ public class Offres {
             pstmt.setString(8 , statut_offre.name());
             pstmt.setString(9 , type_reduction.name());
             pstmt.setObject(10 , contrat.getId());
+
+            pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -169,38 +177,99 @@ public class Offres {
 
 
     public static Offres fromResultSet (ResultSet rs) throws  SQLException , ClassNotFoundException {
-        UUID contratID = rs.getObject("contratid" , UUID.class);
+        UUID contratID = rs.getObject("contrat_id" , UUID.class);
         Contrats contrats = Contrats.FindOneContrat(contratID);
         return new Offres(
                 rs.getObject("id", UUID.class),
                 rs.getString("nom_offre"),
                 rs.getString("description"),
-                rs.getTimestamp("date_debut").toLocalDateTime(),
-                rs.getTimestamp("date_fin").toLocalDateTime(),
+                rs.getDate("date_debut").toLocalDate(),
+                rs.getDate("date_fin").toLocalDate(),
                 rs.getInt("valeur_reduction"),
-                StatutOffre.valueOf(rs.getString("statut_offre")),
                 rs.getString("conditions"),
                 TypeReduction.valueOf(rs.getString("type_reduction")),
+                StatutOffre.valueOf(rs.getString("statut_offre")),
                 contrats
         );
     }
 
+    public static List<Offres> GetAllOffres() throws  SQLException , ClassNotFoundException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
 
-//    public static Offres FindOneOffre(UUID id) throws SQLException , ClassNotFoundException {
-//
-//        Connection conn = null;
-//        PreparedStatement pstmt = null;
-//        ResultSet rs = null;
-//
-//
-//        try {
-//            conn = Database.getConnection();
-//            String sql = "Select contrats.id as contrat_id , offers.id as offer_ic ,  * from Offers JOIN contrats on contrats.id = offers.contratid where offers.id = ? ";
-//
-//        }
-//    }
+        List<Offres> offersList = new ArrayList<>();
+
+        try {
+            conn = Database.getConnection();
+            String sql = "SELECT offres.contratid as contrat_id ,* FROM offres";
+            stmt = conn.prepareStatement(sql);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Offres offre = Offres.fromResultSet(rs);
+                offersList.add(offre);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
 
+
+
+
+        return offersList;
+    }
+
+
+
+    public static Offres FindOneOffre(UUID id) throws SQLException , ClassNotFoundException {
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        Offres offre = null;
+
+
+            conn = Database.getConnection();
+            String sql = "Select contrats.id as contrat_id , offres.id as offre_id ,* from Offres JOIN contrats on contrats.id = offres.contratid where offres.id = ? ";
+
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setObject(1 , id);
+            rs = pstmt.executeQuery();
+
+
+
+            if(rs.next()) {
+
+                offre = Offres.fromResultSet(rs);
+
+
+        }
+
+            return offre;
+    }
+
+
+
+    public static String DeleteOffre(UUID idvalue) throws SQLException {
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+
+        conn = Database.getConnection();
+
+        String sql = "UPDATE offres SET statut_offre = 'EXPIREE' WHERE id = ?";
+        pstmt = conn.prepareStatement(sql);
+        pstmt.setObject(1,idvalue);
+        pstmt.executeUpdate();
+
+
+        return "Offre Deleted succefully";
+
+    }
 
 
 

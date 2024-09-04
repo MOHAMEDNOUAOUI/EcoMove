@@ -1097,7 +1097,7 @@ public class Main {
 
 
 
-    public static  void choicegestionOffres() throws SQLException , ClassNotFoundException {
+    public static  void choicegestionOffres() throws SQLException, ClassNotFoundException, InterruptedException {
 
         boolean check = false;
 
@@ -1124,10 +1124,15 @@ public class Main {
                 case 1:
                     AddOffre();
                     break;
-
-
-
-
+                case 3:
+                    DeleteAnOffer();
+                    break;
+                case 4:
+                    FindAnOffer();
+                    break;
+                case 5:
+                    FindAllOffer();
+                    break;
                 case 6:
                     return;
 
@@ -1147,50 +1152,211 @@ public class Main {
 
     /// ADD OFFREES
 
-    public static void AddOffre() throws ClassNotFoundException {
+    public static void AddOffre() throws ClassNotFoundException, SQLException, InterruptedException {
         System.out.println();
                 System.out.println("Welcome to Offre creating System");
                 System.out.println();
                 System.out.println("To start ill be asking you for some informations to establish first likee , which contrat this offre belongs and so.");
-                System.out.println("So i would like you to give me the Contract id : ");
-                String value = scanner.nextLine();
 
-                Contrats contrat = Contrats.FindOneContrat(UUID.fromString(value));
 
                 boolean choice = false;
 
-               while(!choice) {
-                   if(contrat != null) {
 
+
+               while(!choice) {
+
+                   System.out.println("So i would like you to give me the Contract id : ");
+                   String value = scanner.nextLine();
+
+                   Contrats contrat = Contrats.FindOneContrat(UUID.fromString(value));
+
+                   if(contrat != null && contrat.CheckContractValid(contrat)) {
+
+                       System.out.println("Alright this contracts exist  , now you can procced");
                        System.out.println("First we shall give this offer a name : ");
                        String nom_offre = scanner.nextLine();
 
                        System.out.println("A little description : ");
                        String description = scanner.nextLine();
 
-                       System.out.println("Now ill ass you for the debut date for the offer");
+                       System.out.println("Now ill ass you for the debut date for the offer (0000-00-00)");
                        LocalDate date_debut = LocalDate.parse(scanner.nextLine());
 
-                       System.out.println("Now ill ass you for the fin date for the offer");
+                       System.out.println("Now ill ass you for the fin date for the offer (0000-00-00)");
                        LocalDate date_fin = LocalDate.parse(scanner.nextLine());
 
                        System.out.println("And for the valeur reduction");
                        int valeur_reduction = scanner.nextInt();
 
-                       System.out.println("Choose an offer type : ( " + Arrays.toString()  + ")");
+                       System.out.println("A conditions for the offer :");
+                       String conditions = scanner.nextLine();
+                       scanner.nextLine();
+
+                       System.out.println("Choose a reduction type for the valeur of reduction one of those two : ( " + Arrays.toString(Offres.TypeReduction.values())  + ")");
+
+                       Offres.TypeReduction type_reduction = null;
+
+                       while(type_reduction == null) {
+                           String type_reductionstr = scanner.nextLine().toUpperCase();
+
+                           try {
+                               type_reduction = Offres.TypeReduction.valueOf(type_reductionstr);
+
+                           }catch (IllegalArgumentException e){
+                               System.out.println("invalid Offer reduction type . Defaulting to MONTANT FIX");
+                               type_reduction = Offres.TypeReduction.MONTANTFIX;
+                           }
+                           type_reduction = Offres.TypeReduction.valueOf(type_reductionstr);
+                       }
+
+                       System.out.println("Now All we need is this offer statut : (" + Arrays.toString(Offres.StatutOffre.values())+ ") ");
+                       Offres.StatutOffre statut_offre = null;
+
+                       if(statut_offre == null) {
+                           String statut_offreStr = scanner.nextLine().toUpperCase();
+
+                           try {
+                               statut_offre = Offres.StatutOffre.valueOf(statut_offreStr);
+                           }
+                           catch(IllegalArgumentException e) {
+                               System.out.println("Invalid Offer statut , Defaulting to ACTIVE");
+                               statut_offre = Offres.StatutOffre.ACTIVE;
+                           }
+
+                           statut_offre = Offres.StatutOffre.valueOf(statut_offreStr);
+
+                       }
 
 
 
 
-
-                       return;
+                       Offres offer = new Offres(nom_offre , description , date_debut , date_fin , valeur_reduction , conditions , type_reduction , statut_offre , contrat);
+                       System.out.println("Offer :  " + offer.getNom_offre()+ " succefully created.");
+                       choice = true;
+                       Thread.sleep(2000);
+                       choice = true;
                    }else {
-                       System.out.println("Sorry Sir this Contract doesnt exist at all , Please try again");
+                       System.out.println("Sorry Sir this Contract doesnt exist at all , Or it ended , Please try again");
                    }
                }
 
     }
 
+
+    public static void FindAnOffer() throws IllegalArgumentException, SQLException, ClassNotFoundException {
+
+
+
+        Boolean choice = false;
+
+        while(!choice) {
+
+
+            System.out.println("Enter an offer id : ");
+            UUID OfferId = UUID.fromString(scanner.nextLine());
+            Offres offer = Offres.FindOneOffre(OfferId);
+
+
+            if(offer !=null) {
+
+
+                System.out.println("Offer found:");
+                System.out.println();
+                System.out.println("-------------------------------------------------");
+                System.out.println("Offer ID: " + offer.getId());
+                System.out.println("Name: " + offer.getNom_offre());
+                System.out.println("Description: " + offer.getDescription());
+                System.out.println("Start Date: " + offer.getDate_debut());
+                System.out.println("End Date: " + offer.getDate_fin());
+                System.out.println("Reduction Value: " + offer.getValeur_reduction());
+                System.out.println("Conditions: " + offer.getConditions());
+                System.out.println("Reduction Type: " + offer.getType_reduction());
+                System.out.println("Status: " + offer.getStatut_offre());
+                System.out.println("Contract ID: " + offer.getContrat().getId());
+                System.out.println("-------------------------------------------------");
+
+                choice = true;
+            }
+            else {
+                System.out.println("Sorry this Offer is invalid ");
+            }
+
+        }
+    }
+
+
+    public static void FindAllOffer() throws IllegalArgumentException, ClassNotFoundException, SQLException {
+        List<Offres> offers = Offres.GetAllOffres();
+
+        if (offers.isEmpty()) {
+            System.out.println("No offers available.");
+        }
+        else {
+            System.out.println("List of all offers:");
+            System.out.println("-------------------------------------------------");
+
+            for (Offres offer : offers) {
+                System.out.println("Offer ID: " + offer.getId());
+                System.out.println("Name: " + offer.getNom_offre());
+                System.out.println("Description: " + offer.getDescription());
+                System.out.println("Start Date: " + offer.getDate_debut());
+                System.out.println("End Date: " + offer.getDate_fin());
+                System.out.println("Reduction Value: " + offer.getValeur_reduction());
+                System.out.println("Conditions: " + offer.getConditions());
+                System.out.println("Reduction Type: " + offer.getType_reduction());
+                System.out.println("Status: " + offer.getStatut_offre());
+                System.out.println("Contract ID: " + offer.getContrat().getId());
+                System.out.println("-------------------------------------------------");
+            }
+        }
+
+
+    }
+
+
+    public static void DeleteAnOffer() throws SQLException , ClassNotFoundException , IllegalArgumentException {
+
+        System.out.println("Please enter an Offer ID : ");
+
+
+
+
+
+        boolean choice = false;
+
+        while(!choice) {
+
+            String value = scanner.nextLine();
+            UUID Offer_id = UUID.fromString(value);
+            Offres offre = Offres.FindOneOffre(Offer_id);
+
+
+
+            if(offre != null) {
+                System.out.println("Ow Here you go we found the Offer you looking for ");
+                System.out.println();
+                System.out.println("Are you sure you want to delete this offer ? (yes / no )");
+                String choix = scanner.nextLine().toLowerCase().trim();
+
+                if(choix.equals("yes")) {
+                    System.out.println(Offres.DeleteOffre(Offer_id));
+                }
+                else {
+                    return;
+                }
+
+
+
+
+                choice = true;
+            }else {
+                System.out.println("We couldnt find this offer , please try again ");
+
+            }
+        }
+
+
+    }
 
 
 }
