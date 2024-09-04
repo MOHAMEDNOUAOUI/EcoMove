@@ -62,7 +62,7 @@ public class Contrats {
             conn = Database.getConnection();
 
             String sql = "INSERT INTO contrats (id , date_debut , date_fin , tarif_special , conditions_accord , renouvelable , statut_contrat , partenaireid) " +
-                    "VALUES (? ,?, ?, ?, ?, ?, ?::StatutContrat, ?)";
+                    "VALUES (? ,?, ?, ?, ?, ?, ?::statut_contrat, ?)";
 
             pstmt = conn.prepareStatement(sql);
             pstmt.setObject(1, id);
