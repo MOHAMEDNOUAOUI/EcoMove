@@ -277,5 +277,48 @@ public class Offres {
 
 
 
+    public static void ModifierOffre(UUID offreid , String column , String value) throws SQLException , ClassNotFoundException {
+        Connection conn = null;
+        PreparedStatement pstmt = null ;
+        conn = Database.getConnection();
+        try {
+            String sql = "UPDATE offres SET " + column + " = ? WHERE id = ?";
+            pstmt = conn.prepareStatement(sql);
+
+            if(column.equals("date_debut") || column.equals("date_fin")){
+                pstmt.setDate(1 , Date.valueOf(value));
+            }
+            else if(column.equals("id") || column.equals("contratid")) {
+                pstmt.setObject(1 , UUID.fromString(value));
+            }
+            else if (column.equals("valeur_reduction")){
+                pstmt.setInt(1 , Integer.parseInt(value));
+            }
+            else if(column.equals("statut_offre")) {
+                pstmt.setObject(1 , value , java.sql.Types.OTHER);
+            }
+            else if(column.equals("type_reduction")) {
+                pstmt.setObject(1 , value , java.sql.Types.OTHER);
+            }
+            else {
+                pstmt.setString(1 , value);
+            }
+
+            pstmt.setObject(2 , offreid);
+
+
+
+            pstmt.executeUpdate();
+
+
+            System.out.println("The Offre   "+column+" has been succefully updated to "+value);
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
 
 }

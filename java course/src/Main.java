@@ -1124,6 +1124,9 @@ public class Main {
                 case 1:
                     AddOffre();
                     break;
+                case 2:
+                    ModifyOffre();
+                    break;
                 case 3:
                     DeleteAnOffer();
                     break;
@@ -1360,8 +1363,164 @@ public class Main {
 
 
 
-    public void ModifyContrat() throws SQLException , ClassNotFoundException {
+    public static void ModifyOffre() throws InterruptedException, SQLException, ClassNotFoundException {
+        System.out.println("Alright first thing first is what is the Offre id you wanna modify ?");
+        String offreIdString = scanner.nextLine();
 
+        System.out.println("Alright ill go check if it exist , please wait a bit");
+        Thread.sleep(4000);
+
+        UUID idoffre = UUID.fromString(offreIdString);
+        Offres offre = Offres.FindOneOffre(idoffre);
+
+        if(offre != null) {
+            System.out.println("Alright Sir it defenityl exist , please look at the menu and choose what you wantt");
+
+
+            boolean check = false;
+
+            while(!check) {
+                System.out.println();
+                System.out.println(" -----------------------------");
+                System.out.println("|       Modification Kit      |");
+                System.out.println("|                             |");
+                System.out.println("|  1 : Offre name             |");
+                System.out.println("|  2 : Description            |");
+                System.out.println("|  3 : Date_debut             |");
+                System.out.println("|  4 : Date_fin               |");
+                System.out.println("|  5 : valeur_reduction       |");
+                System.out.println("|  6 : conditions             |");
+                System.out.println("|  7 : Statut_offre           |");
+                System.out.println("|  8 : Type_Offre             |");
+                System.out.println("|  9 : return                 |");
+                System.out.println("|                             |");
+                System.out.println(" -----------------------------");
+                System.out.print("Enter Your Choice : ");
+                int choice = scanner.nextInt();
+                scanner.nextLine();
+
+                switch (choice) {
+                    case 1:
+                    {
+                        System.out.println("The current offre name  is " + offre.getNom_offre());
+                        System.out.print("Enter The new Name : ");
+                        String value = scanner.nextLine();
+                        Offres.ModifierOffre(idoffre , "nom_offre" , value );
+                        offre.setNom_offre(value);
+                        Thread.sleep(2000);
+                        break;
+                    }
+
+                    case 2 : {
+
+                        System.out.println("The current Description is " + offre.getDescription());
+                        System.out.print("Enter The new Description : ");
+                        String value = scanner.nextLine();
+                        Contrats.ModifierContrat(idoffre , "descriptions" , value );
+                        offre.setDescription(value);
+                        Thread.sleep(2000);
+
+
+
+
+                        break;
+                    }
+
+                    case 3 : {
+
+                        System.out.println("The current Date debut is " + offre.getDate_debut());
+                        System.out.print("Enter The new Date debut : ");
+                        String value = scanner.nextLine();
+                        Offres.ModifierOffre(idoffre , "date_debut" , value );
+                        offre.setDate_debut(LocalDate.parse(value));
+                        Thread.sleep(2000);
+
+
+
+
+
+                        break;
+                    }
+
+                    case 4 : {
+                        System.out.println("The current fin date is :  " + offre.getDate_fin());
+                        System.out.print("Enter The new fin date : ");
+                        String value = scanner.nextLine();
+                        Offres.ModifierOffre(idoffre , "date_fin" , value );
+                        offre.setDate_fin(LocalDate.parse(value));
+                        Thread.sleep(2000);
+
+                        break;
+                    }
+
+                    case 5 : {
+
+
+
+                        System.out.println("The current reduction value is :  " + offre.getValeur_reduction());
+                        System.out.print("Enter The new value type : ");
+                        String value = scanner.nextLine();
+                        Offres.ModifierOffre(idoffre, "valeur_reduction" , value );
+                        offre.setValeur_reduction(Integer.parseInt(value));
+                        Thread.sleep(2000);
+
+                        break;
+                    }
+
+                    case 6 : {
+
+                        System.out.println("The current Conditions are  :  " + offre.getConditions());
+                        System.out.print("Enter The new Conditions are : ");
+                        String value = scanner.nextLine();
+                        Offres.ModifierOffre(idoffre , "conditions" , value );
+                        offre.setConditions(value);
+                        Thread.sleep(2000);
+
+                        break;
+                    }
+
+
+                    case 7 : {
+
+                        System.out.println("The current Offre Statut is :  " + offre.getStatut_offre());
+                        System.out.print("Enter The new Statut from these : ( " + Arrays.toString(Offres.StatutOffre.values()) + " ) ");
+                        String value = scanner.nextLine();
+                        Offres.ModifierOffre(idoffre , "statut_offre" , value );
+                        offre.setStatut_offre(Offres.StatutOffre.valueOf(value));
+                        Thread.sleep(2000);
+
+                        break;
+                    }
+
+
+                    case 8:
+                        System.out.println("The current Reduction type is :  " + offre.getType_reduction());
+                        System.out.print("Enter The new Type from these : ( " + Arrays.toString(Offres.TypeReduction.values()) + " ) ");
+                        String value = scanner.nextLine();
+                        Offres.ModifierOffre(idoffre , "type_reduction" , value );
+                        offre.setType_reduction(Offres.TypeReduction.valueOf(value));
+                        Thread.sleep(2000);
+
+                        break;
+
+
+
+                    case 9 :
+                        return;
+                    default:
+                        System.out.println("invalid Choice Please try again");
+                }
+
+
+            }
+
+
+
+
+        }
+        else {
+            System.out.println("Sorry we couldnt find this contrat id");
+        }
     }
 
 
