@@ -24,13 +24,12 @@ public class Offres {
 
     private Contrats contrat;
 
-<<<<<<< HEAD
+
     public enum TypeReduction {POURECENTAGE,MONTANTFIX}
     public enum StatutOffre {ACTIVE,EXPIREE,SUSPENDU};
-=======
-    enum TypeReduction {POURECENTAGE , MONTANTFIX }
-    enum StatutOffre {ACTIVE , EXPIREE , SUSPENDU};
->>>>>>> 1ae488bef07cc010c08a824e13fc8a5310cc61ed
+
+
+
 
 
     public Offres (UUID id ,String nom_offre , String description , LocalDate date_debut , LocalDate date_fin ,  int valeur_reduction  ,String conditions ,  TypeReduction type_reduction ,  StatutOffre statut_offre   , Contrats contrats) throws SQLException, ClassNotFoundException {

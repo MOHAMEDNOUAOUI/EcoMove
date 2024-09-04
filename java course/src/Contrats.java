@@ -309,16 +309,19 @@ public class Contrats {
     public boolean CheckContractValid(Contrats contrat){
         LocalDate TodaysDate = LocalDate.now();
         LocalDate contratdate_debut = Date.valueOf(contrat.getDate_debut()).toLocalDate();
-        LocalDate contratdate_fin = Date.valueOf(contrat.getDate_debut()).toLocalDate();
+        LocalDate contratdate_fin = Date.valueOf(contrat.getDate_fin()).toLocalDate();
+        String statut = contrat.getStatut_contrat().toString();
 
-        if(TodaysDate.compareTo(contratdate_debut) > 0  && TodaysDate.compareTo(contratdate_fin) < 0 && contrat.getStatut_contrat().equals("encours")) {
+
+        if(TodaysDate.isAfter(contratdate_debut) && TodaysDate.isBefore(contratdate_fin)  && statut.equals("encours")) {
             return true;
         }
         else {
             return false;
         }
-
-
     }
+
+
+
 
 }
